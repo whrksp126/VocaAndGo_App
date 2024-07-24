@@ -19,7 +19,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.whrksp126.vocaandgo_app",
+      "package": "com.ghmate.vocaandgo",
       "versionCode": 2 
     },
     "web": {
