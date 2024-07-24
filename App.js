@@ -19,6 +19,18 @@ export default function App() {
     if (result.type === 'success' && result.url) {
       // 브라우저 팝업을 종료합니다.
       WebBrowser.dismissAuthSession();
+      // URL에서 토큰을 추출합니다.
+      const { token, email, name, status } = Linking.parse(result.url).queryParams;
+      // WebView로 인증 정보를 전달합니다.
+      if (webViewRef.current) {
+        webViewRef.current.postMessage(JSON.stringify({
+          type: 'authSuccess',
+          token,
+          email,
+          name,
+          status
+        }));
+      }
     }
   };
 
@@ -26,7 +38,6 @@ export default function App() {
     const handleUrl = (event) => {
       console.log("Received URL from event: ", event.url); // 이벤트로 받은 URL 로그 출력
       const { token, email, name, status } = Linking.parse(event.url).queryParams;
-
       if (webViewRef.current) {
         webViewRef.current.postMessage(JSON.stringify({
           type: 'authSuccess',
