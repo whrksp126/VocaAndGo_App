@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "HeyVoca",
-    "slug": "HeyVoca",
+    "name": "vocaandgo_app",
+    "slug": "vocaandgo_app",
     "version": "1.0.0",
-    "scheme": "HeyVoca",
+    "scheme": "vocaandgo_app",
     "platforms": ["ios", "android"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",

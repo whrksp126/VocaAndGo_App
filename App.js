@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, SafeAreaView, StatusBar, useColorScheme, BackHandler, Alert, ToastAndroid } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as WebBrowser from 'expo-web-browser';
-import * as AuthSession from 'expo-auth-session';
+import * as Linking from 'expo-linking';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -12,30 +12,38 @@ export default function App() {
   const webViewRef = useRef(null);
   const [lastBackPressed, setLastBackPressed] = useState(0);
 
-  const redirectUri = AuthSession.makeRedirectUri({
-    useProxy: true,
-    scheme: 'HeyVoca'
+  const handleAuth = async () => {
+    const authUrl = 'https://vocaandgo.ghmate.com/login/google';
+    const result = await WebBrowser.openAuthSessionAsync(authUrl);
 
-  });
-
-  const [request, response, promptAsync] = AuthSession.useAuthRequest(
-    {
-      clientId: '',
-      scopes: ['profile', 'email', 'openid', 'https://www.googleapis.com/auth/drive.file'],
-      redirectUri,
-    },
-    {
-      authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
+    if (result.type === 'success' && result.url) {
+      // 브라우저 팝업을 종료합니다.
+      WebBrowser.dismissAuthSession();
     }
-  );
+  };
 
   useEffect(() => {
-    if (response?.type === 'success') {
-      const { code } = response.params;
-      console.log('Auth code:', code);
-      webViewRef.current.injectJavaScript(`handleAuthSuccess('${code}')`);
-    }
-  }, [response]);
+    const handleUrl = (event) => {
+      console.log("Received URL from event: ", event.url); // 이벤트로 받은 URL 로그 출력
+      const { token, email, name, status } = Linking.parse(event.url).queryParams;
+
+      if (webViewRef.current) {
+        webViewRef.current.postMessage(JSON.stringify({
+          type: 'authSuccess',
+          token,
+          email,
+          name,
+          status
+        }));
+      }
+    };
+
+    Linking.addEventListener('url', handleUrl);
+
+    return () => {
+      Linking.removeEventListener('url', handleUrl);
+    };
+  }, []);
 
   useEffect(() => {
     const backAction = () => {
@@ -58,7 +66,7 @@ export default function App() {
   const handleMessage = (event) => {
     const message = event.nativeEvent.data;
     if (message === 'launchGoogleAuth') {
-      promptAsync();
+      handleAuth();
     } else {
       try {
         const data = JSON.parse(message);
