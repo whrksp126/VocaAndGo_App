@@ -116,6 +116,7 @@ export default function App() {
         bounces={false}
         overScrollMode="never"
         onMessage={handleMessage}
+        userAgent="HeyVocaWebView"
         injectedJavaScript={`
           window.alert = function(message) {
             window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'alert', message: message }));
