@@ -2,7 +2,7 @@
   "expo": {
     "name": "HeyVoca",
     "slug": "vocaandgo_app",
-    "version": "1.1.0",
+    "version": "1.1.2",
     "scheme": "HeyVoca",
     "platforms": [
       "ios",
@@ -25,7 +25,21 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.ghmate.vocaandgo",
-      "versionCode": 3
+      "versionCode": 5,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "HeyVoca",
+              "host": "auth"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"],
+          "autoVerify": true
+        }
+      ]
+
     },
     "web": {
       "favicon": "./assets/favicon.png"
