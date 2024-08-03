@@ -16,26 +16,13 @@ export default function App() {
   const isDarkMode = colorScheme === 'dark';
   const webViewRef = useRef(null);
   const [lastBackPressed, setLastBackPressed] = useState(0);
-  const [userInfo, setUserInfo] = useState(null);
-
-  useEffect(() => {
-    GoogleSignin.signInSilently()
-      .then(user => {
-        setUserInfo(user);
-      })
-      .catch(error => {
-        if (error.code === statusCodes.SIGN_IN_REQUIRED) {
-          // User has not signed in yet
-        } else {
-          console.error(error);
-        }
-      });
-  }, []);
 
   const handleMessage = (event) => {
     const message = event.nativeEvent.data;
     if (message === 'launchGoogleAuth') {
       signInWithGoogle();
+    } else if (message === 'logoutGoogleAuth') {
+      signOutWithGoogle();
     } else {
       try {
         const data = JSON.parse(message);
@@ -53,13 +40,16 @@ export default function App() {
       }
     }
   };
-
+  // 구글 로그인
   const signInWithGoogle = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      setUserInfo(userInfo);
-      console.log('Login success: ', userInfo);
+      if (webViewRef.current) {
+        const newUrl = `${FRONT_URL}/html/login.html?token=${userInfo.idToken}&email=${userInfo.user.email}&name=${userInfo.user.name}&status=200`;
+        const script = `window.location.href = '${newUrl}';`;
+        webViewRef.current.injectJavaScript(script);
+      }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log('User cancelled the login flow');
@@ -70,6 +60,14 @@ export default function App() {
       } else {
         console.error('Login failed: ', error);
       }
+    }
+  };
+  // 구글 로그아웃 
+  const signOutWithGoogle = async () => {
+    try {
+      await GoogleSignin.signOut();
+    } catch (error) {
+      console.error('Logout failed: ', error);
     }
   };
 
