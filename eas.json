@@ -2,21 +2,12 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "env": {
-        "GOOGLE_CLIENT_ANDROID_ID": "1029120969045-vper1iqgi0g3bpo5fmbjuj5a5rqkfinr.apps.googleusercontent.com",
-        "GOOGLE_CLIENT_WEB_ID": "1029120969045-qe419opo6hme2kdk45j98qghc3tafo2u.apps.googleusercontent.com",
-        "IOS_URL_SCHEME": "com.googleusercontent.apps.your_client_id_here"
-      }
+      "distribution": "internal"
     },
     "preview": {
       "distribution": "internal"
     },
     "production": {
-      "distribution": "store",
-      "android": {
-        "buildType": "app-bundle"
-      },
       "env": {
         "GOOGLE_CLIENT_ANDROID_ID": "1029120969045-vper1iqgi0g3bpo5fmbjuj5a5rqkfinr.apps.googleusercontent.com",
         "GOOGLE_CLIENT_WEB_ID": "1029120969045-qe419opo6hme2kdk45j98qghc3tafo2u.apps.googleusercontent.com",
