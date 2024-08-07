@@ -4,6 +4,7 @@ import { WebView } from 'react-native-webview';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { GOOGLE_CLIENT_ANDROID_ID, GOOGLE_CLIENT_WEB_ID } from '@env';
 
+
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_WEB_ID,
   androidClientId: GOOGLE_CLIENT_ANDROID_ID,
@@ -45,6 +46,7 @@ export default function App() {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
+      Alert.alert('', '로그인 성공', [{ text: 'OK' }], { cancelable: false });
       if (webViewRef.current) {
         const newUrl = `${FRONT_URL}/html/login.html?token=${userInfo.idToken}&email=${userInfo.user.email}&name=${userInfo.user.name}&status=200`;
         const script = `window.location.href = '${newUrl}';`;
@@ -52,13 +54,17 @@ export default function App() {
       }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log('User cancelled the login flow');
+        Alert.alert('', '사용자가 로그인 흐름을 취소했습니다', [{ text: 'OK' }], { cancelable: false });
+        console.log('사용자가 로그인 흐름을 취소했습니다.');
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log('Signin in progress');
+        Alert.alert('', '로그인 진행 중', [{ text: 'OK' }], { cancelable: false });
+        console.log('로그인 진행 중');
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        console.log('Play services not available or outdated');
+        Alert.alert('', 'Play 서비스를 사용할 수 없거나 오래되었습니다', [{ text: 'OK' }], { cancelable: false });
+        console.log('Play 서비스를 사용할 수 없거나 오래되었습니다.');
       } else {
-        console.error('Login failed: ', error);
+        Alert.alert('', `로그인 실패,${error}`, [{ text: 'OK' }], { cancelable: false });
+        console.error('로그인 실패: ', error);
       }
     }
   };
@@ -67,7 +73,7 @@ export default function App() {
     try {
       await GoogleSignin.signOut();
     } catch (error) {
-      console.error('Logout failed: ', error);
+      console.error('로그아웃 실패: ', error);
     }
   };
 
