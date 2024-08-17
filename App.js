@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, SafeAreaView, StatusBar, useColorScheme, BackHandler, Alert, ToastAndroid } from 'react-native';
+import { StyleSheet, SafeAreaView, StatusBar, useColorScheme, BackHandler, Alert, ToastAndroid, AppRegistry } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { GOOGLE_CLIENT_ANDROID_ID, GOOGLE_CLIENT_WEB_ID } from '@env';
-
 
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_WEB_ID,
@@ -11,7 +10,7 @@ GoogleSignin.configure({
   offlineAccess: true,
 });
 
-export default function App() {
+const App = () => {
   const FRONT_URL = `https://voca.ghmate.com`;
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
@@ -41,7 +40,7 @@ export default function App() {
       }
     }
   };
-  // 구글 로그인
+
   const signInWithGoogle = async () => {
     try {
       await GoogleSignin.hasPlayServices();
@@ -53,22 +52,23 @@ export default function App() {
         webViewRef.current.injectJavaScript(script);
       }
     } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        Alert.alert('', '사용자가 로그인 흐름을 취소했습니다', [{ text: 'OK' }], { cancelable: false });
-        console.log('사용자가 로그인 흐름을 취소했습니다.');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        Alert.alert('', '로그인 진행 중', [{ text: 'OK' }], { cancelable: false });
-        console.log('로그인 진행 중');
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        Alert.alert('', 'Play 서비스를 사용할 수 없거나 오래되었습니다', [{ text: 'OK' }], { cancelable: false });
-        console.log('Play 서비스를 사용할 수 없거나 오래되었습니다.');
-      } else {
-        Alert.alert('', `로그인 실패,${error}`, [{ text: 'OK' }], { cancelable: false });
-        console.error('로그인 실패: ', error);
-      }
+      handleSignInError(error);
     }
   };
-  // 구글 로그아웃 
+
+  const handleSignInError = (error) => {
+    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+      Alert.alert('', '사용자가 로그인 흐름을 취소했습니다', [{ text: 'OK' }], { cancelable: false });
+    } else if (error.code === statusCodes.IN_PROGRESS) {
+      Alert.alert('', '로그인 진행 중', [{ text: 'OK' }], { cancelable: false });
+    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+      Alert.alert('', 'Play 서비스를 사용할 수 없거나 오래되었습니다', [{ text: 'OK' }], { cancelable: false });
+    } else {
+      Alert.alert('', `로그인 실패,${error}`, [{ text: 'OK' }], { cancelable: false });
+      console.error('로그인 실패: ', error);
+    }
+  };
+
   const signOutWithGoogle = async () => {
     try {
       await GoogleSignin.signOut();
@@ -131,3 +131,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+// 여기서 앱을 등록합니다.
+AppRegistry.registerComponent('main', () => App);
+
+export default App;
